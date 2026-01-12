@@ -62,7 +62,6 @@ EXPOSE 3333
 ENTRYPOINT [
   "node",
   "cli.js",
-  "--transport", "sse",
   "--host", "0.0.0.0",
   "--port", "8331",
   "--headless",
