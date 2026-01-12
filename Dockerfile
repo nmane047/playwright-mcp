@@ -59,13 +59,4 @@ COPY --chown=${USERNAME}:${USERNAME} cli.js package.json ./
 EXPOSE 3333
 
 # 🚨 Critical: do NOT allow localhost-only mode
-ENTRYPOINT [
-  "node",
-  "cli.js",
-  "--transport", "sse",
-  "--host", "0.0.0.0",
-  "--port", "8331",
-  "--headless",
-  "--browser", "chromium",
-  "--no-sandbox"
-]
+ENTRYPOINT ["node", "cli.js","--transport","sse","--host","0.0.0.0","--port","8331","--headless", "--browser", "chromium", "--no-sandbox"]
