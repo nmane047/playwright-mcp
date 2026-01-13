@@ -39,7 +39,7 @@ RUN npx -y playwright-core install --no-shell chromium
 # Runtime
 # ------------------------------
 FROM base
-
+ARG PLAYWRIGHT_BROWSERS_PATH
 ARG USERNAME=node
 ENV NODE_ENV=production
 ENV PLAYWRIGHT_MCP_OUTPUT_DIR=/tmp/playwright-output
