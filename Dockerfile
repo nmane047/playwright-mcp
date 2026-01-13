@@ -56,7 +56,7 @@ COPY --from=browser --chown=${USERNAME}:${USERNAME} ${PLAYWRIGHT_BROWSERS_PATH} 
 COPY --chown=${USERNAME}:${USERNAME} cli.js package.json ./
 
 # Gateway MUST be able to reach this
-EXPOSE 3333
+EXPOSE 8331
 
 # 🚨 Critical: do NOT allow localhost-only mode
 ENTRYPOINT ["node", "cli.js","--host","0.0.0.0","--port","8331","--headless", "--browser", "chromium", "--no-sandbox"]
