@@ -524,6 +524,34 @@ using the `--config` command line option:
 npx @playwright/mcp@latest --config path/to/config.json
 ```
 
+### Iframes and elements inside iframes
+
+Pages that embed content in **iframes** (e.g. reservation widgets, embedded forms, or content with **data-testid** / **data-componentid**) are supported:
+
+1. **Snapshot**: The accessibility snapshot includes iframe content. Elements inside iframes appear with refs like `f1e2` (frame 1, element 2). Use the exact `ref` from the snapshot when calling tools.
+
+2. **Actions**: Use the same tools (`browser_click`, `browser_type`, etc.) with the **ref** from the snapshot. This repo includes iframe-aware ref resolution: if the element is inside an iframe, the ref is resolved in the correct frame so actions succeed.
+
+3. **Data component ID / data-testid**: The snapshot exposes accessible names and roles. If your app uses `data-testid` or a custom attribute (e.g. `data-componentid`), you can set `testIdAttribute` in config (default is `data-testid`). Elements are still identified in the snapshot by their **ref** (e.g. `[ref=f1e5]`); use that ref for actions.
+
+**End-to-end flow (e.g. login on main page → cart inside iframe):**
+
+You do **not** need to call a separate "switch to iframe" or "switch to default" step. Each action is resolved by **ref**:
+
+1. **Main page** (login, navigate): Use refs from the snapshot that have no frame prefix (e.g. `e1`, `e2`). Actions run on the main page.
+2. **Navigate** to the page that loads content in an iframe (e.g. cart next gen).
+3. **Take a new snapshot** (`browser_snapshot`) so the iframe content and its refs (e.g. `f1e1`, `f1e2`) appear.
+4. **Iframe content** (cart actions): Use refs that start with `f<N>e...` (e.g. `f1e5`). The server resolves these in the correct frame automatically.
+5. **Back on main page** (e.g. header, logout): Use refs from the snapshot that are on the main page (no `f` prefix). The next action runs on the main page automatically.
+
+So "switching" is implicit: use a main-page ref → action on main page; use an iframe ref → action in that iframe. No explicit switch to iframe or switch to default is required.
+
+**If actions on iframe elements fail:**
+
+- Capture a fresh snapshot (`browser_snapshot`) so refs are current.
+- Use the exact ref shown in the snapshot (including the `f<N>e<id>` form for iframe elements).
+- Ensure the Playwright MCP server and browser are up to date.
+
 <details>
 <summary>Configuration file schema</summary>
 
