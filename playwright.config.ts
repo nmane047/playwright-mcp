@@ -18,6 +18,23 @@ import { defineConfig } from '@playwright/test';
 
 import type { TestOptions } from './tests/fixtures';
 
+import { defineConfig } from '@playwright/test';
+
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  reporter: [
+    ['html'],                // HTML report
+    ['json', { outputFile: 'test-results.json' }],
+    ['junit', { outputFile: 'junit-results.xml' }]
+  ],
+});
+
+export default defineConfig({
+  // Give failing tests 3 retry attempts
+  retries: 3,
+});
+
 export default defineConfig<TestOptions>({
   testDir: './tests',
   fullyParallel: true,
