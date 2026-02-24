@@ -18,38 +18,33 @@ import { defineConfig } from '@playwright/test';
 
 import type { TestOptions } from './tests/fixtures';
 
-import { defineConfig } from '@playwright/test';
-
-import { defineConfig } from '@playwright/test';
-
-export default defineConfig({
-  reporter: [
-    ['html'],                // HTML report
-    ['json', { outputFile: 'test-results.json' }],
-    ['junit', { outputFile: 'junit-results.xml' }]
-  ],
-});
-
-export default defineConfig({
-  // Give failing tests 3 retry attempts
-  retries: 3,
-});
-
 export default defineConfig<TestOptions>({
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   workers: process.env.CI ? 2 : undefined,
-  reporter: 'list',
+
+  // Retries
+  retries: 3,
+
+  // Reporters
+  reporter: [
+    ['list'],  // console output
+    ['html'],  // HTML report
+    ['json', { outputFile: 'test-results.json' }],
+    ['junit', { outputFile: 'junit-results.xml' }]
+  ],
+
   projects: [
     { name: 'chrome' },
-    ...process.env.MCP_IN_DOCKER ? [{
+
+    ...(process.env.MCP_IN_DOCKER ? [{
       name: 'chromium-docker',
       grep: /browser_navigate|browser_click/,
       use: {
         mcpBrowser: 'chromium',
         mcpMode: 'docker' as const
       }
-    }] : [],
+    }] : []),
   ],
 });
