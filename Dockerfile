@@ -55,6 +55,11 @@ ARG USERNAME=node
 ENV NODE_ENV=production
 ENV PLAYWRIGHT_MCP_OUTPUT_DIR=/tmp/playwright-output
 
+# IMPORTANT: Gateway-accessible defaults
+ENV MCP_HOST=0.0.0.0
+ENV MCP_PORT=8331
+ENV MCP_TRANSPORT=sse
+
 # Set the correct ownership for the runtime user on production `node_modules`
 RUN chown -R ${USERNAME}:${USERNAME} node_modules
 
@@ -63,5 +68,8 @@ USER ${USERNAME}
 COPY --from=browser --chown=${USERNAME}:${USERNAME} ${PLAYWRIGHT_BROWSERS_PATH} ${PLAYWRIGHT_BROWSERS_PATH}
 COPY --chown=${USERNAME}:${USERNAME} packages/playwright-mcp/cli.js packages/playwright-mcp/package.json ./
 
+# Gateway MUST be able to reach this
+EXPOSE 8331
+
 # Run in headless and only with chromium (other browsers need more dependencies not included in this image)
-ENTRYPOINT ["node", "cli.js", "--headless", "--browser", "chromium", "--no-sandbox"]
+ENTRYPOINT ["node", "cli.js","--host","0.0.0.0","--allowed-hosts","*","--port","8331","--headless", "--browser", "chromium", "--no-sandbox"]
